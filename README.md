@@ -101,7 +101,3 @@ python plot_player_shots.py
 3. Follow **[`powerbi/Court_Coordinate_Mapping_Guide.md`](file:///d:/projects/NBA%20Spatial%20Efficiency%20Analysis/powerbi/Court_Coordinate_Mapping_Guide.md)** to configure scatter visual overlays using `powerbi/nba_half_court.jpg`.
 
 ---
-
-## 📄 Resume & Portfolio Guide
-
-Check out **[`RESUME_SHOWCASE.md`](file:///d:/projects/NBA%20Spatial%20Efficiency%20Analysis/RESUME_SHOWCASE.md)** for copy-paste resume bullet points (STAR method), project pitches, system architecture diagrams, and interview Q&A!
