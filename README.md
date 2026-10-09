@@ -1,107 +1,129 @@
-# 🏀 NBA Spatial Efficiency & Expected Value (EV) Analytics
+# NBA Spatial Efficiency & Expected Value Analytics
 
-An automated Python ETL pipeline and Power BI spatial analytics framework analyzing **7,000+ shot attempts** for the **Golden State Warriors (2021-22 NBA Championship Season)**. It transforms raw 2D court coordinates into spatial Expected Value (EV) metrics and renders interactive half-court shot charts.
+This project answers two questions: which Golden State Warriors players created the most value above their expected shot output, and how much of that performance was driven by shot location and zone efficiency during the 2021-22 season? It combines NBA shot logs, spatial zone baselines, and expected-value calculations into a reproducible data-science workflow.
 
----
+## Key insight
 
-## 🖼️ Visual Showcase
+The clearest result from the analysis is that Gary Payton II delivered the strongest efficiency on a per-shot basis, posting +53.99 total PAE with +0.1569 PAE per shot. Stephen Curry generated +15.41 PAE across 1,224 attempts, while Andrew Wiggins added +29.32 PAE on 1,019 attempts.
 
-### **Stephen Curry - Spatial Shot Chart (1,224 Attempts)**
-![Stephen Curry Spatial Shot Chart](powerbi/Stephen_Curry_Shot_Chart.png)
+## Visual showcase
 
-### **Klay Thompson & Gary Payton II Shot Charts**
-| **Klay Thompson** | **Gary Payton II (Highest EV / Shot)** |
-| :---: | :---: |
-| ![Klay Thompson Shot Chart](powerbi/Klay_Thompson_Shot_Chart.png) | ![Gary Payton II Shot Chart](powerbi/Gary_Payton_II_Shot_Chart.png) |
+### Stephen Curry
+![Stephen Curry shot chart](images/stephen_curry_shot_chart.png)
 
----
+### Player comparisons
+| Player | Shot chart |
+| --- | --- |
+| Klay Thompson | ![Klay Thompson shot chart](images/klay_thompson_shot_chart.png) |
+| Gary Payton II | ![Gary Payton II shot chart](images/gary_payton_ii_shot_chart.png) |
+| Andrew Wiggins | ![Andrew Wiggins shot chart](images/andrew_wiggins_shot_chart.png) |
 
-## 📊 Key Analytics & Insights
+## Results table
 
-* **Stephen Curry**: 1,224 total shot attempts (535 FGM, 43.7% FG%), generating **+15.41 Points Above Expected (PAE)** driven by high 3-point volume.
-* **Gary Payton II**: Highest efficiency on the championship roster with **+53.99 PAE** (**+0.1569 PAE per shot**) due to high-value rim finishing (61.6% FG%).
-* **Andrew Wiggins**: Generated **+29.32 PAE** across 1,019 shot attempts with a 54.3% Effective Field Goal Percentage (eFG%).
+| Player | Total shots | FG% | Total PAE | PAE per shot |
+| --- | ---: | ---: | ---: | ---: |
+| Gary Payton II | 344 | 0.6163 | 53.99 | 0.1569 |
+| Andrew Wiggins | 1019 | 0.4661 | 29.32 | 0.0288 |
+| Klay Thompson | 573 | 0.4293 | 25.36 | 0.0443 |
+| Stephen Curry | 1224 | 0.4371 | 15.41 | 0.0126 |
+| Otto Porter Jr. | 416 | 0.4639 | 15.19 | 0.0365 |
 
----
+## Charts
 
-## 📐 Analytical & Mathematical Framework
+- [images/stephen_curry_shot_chart.png](images/stephen_curry_shot_chart.png)
+- [images/klay_thompson_shot_chart.png](images/klay_thompson_shot_chart.png)
+- [images/gary_payton_ii_shot_chart.png](images/gary_payton_ii_shot_chart.png)
+- [images/andrew_wiggins_shot_chart.png](images/andrew_wiggins_shot_chart.png)
+- [images/nba_half_court.jpg](images/nba_half_court.jpg)
 
-### **1. Coordinate Normalization (50ft x 47ft Half-Court)**
-Raw NBA API coordinates (`LOC_X` in `[-250, 250]`, `LOC_Y` in `[-52, 418]`) in tenths of a foot are normalized to standard court dimensions for Power BI and Python scatter visuals:
-* **`POWERBI_X`** = `(LOC_X + 250) / 10`  *(Range: 0 to 50 feet)*
-* **`POWERBI_Y`** = `(LOC_Y + 52) / 10`  *(Range: 0 to 47 feet)*
-
-### **2. Expected Value (EV) Metrics**
-* **Shot Value**: `3` for 3-Point attempts, `2` for 2-Point attempts.
-* **Zone Baseline FG%**: Baseline scoring percentage for each spatial court zone.
-* **Expected Value (EV)** = `Shot Value * Zone Baseline FG%`
-* **Points Above Expected (PAE)** = `Actual Points Scored - Expected Value`
-
----
-
-## 📁 Repository Structure
+## Project structure
 
 ```text
 NBA Spatial Efficiency Analysis/
 ├── data/
 │   ├── raw/
-│   │   └── GSW_2022_Roster_Shots.csv       # Raw spatial API shot extract
+│   │   ├── gsw_2022_roster_shots.csv
+│   │   └── gsw_2022_roster_shots_root.csv
 │   └── processed/
-│       ├── Fact_Shots.csv                  # 7,081 granular shot facts with EV metrics
-│       ├── Dim_Player.csv                  # Player dimension table & aggregate stats
-│       └── Dim_Shot_Zone.csv               # Spatial zone efficiency benchmarks
+│       ├── fact_shots.csv
+│       ├── dim_player.csv
+│       ├── dim_shot_zone.csv
+│       ├── gsw_2022_processed_ev.csv
+│       └── spatial_zone_ev_summary.csv
+├── images/
+│   ├── andrew_wiggins_shot_chart.png
+│   ├── gary_payton_ii_shot_chart.png
+│   ├── klay_thompson_shot_chart.png
+│   ├── nba_half_court.jpg
+│   └── stephen_curry_shot_chart.png
+├── notebooks/
+│   ├── 01_gsw_data_ingestion.ipynb
+│   └── 02_gsw_feature_engineering.ipynb
+├── reports/
+│   ├── court_coordinate_mapping_guide.md
+│   └── dax_measures.dax
 ├── src/
-│   ├── config.py                           # Central configuration & API rate limits
-│   ├── ingestion.py                        # NBA REST API fetcher with retries & caching
-│   ├── processing.py                       # Coordinate scaling & EV calculation
-│   ├── pipeline.py                         # Automated CLI orchestrator
-│   └── court_visualizer.py             # Matplotlib half-court shot chart renderer
-├── powerbi/
-│   ├── DAX_Measures.dax                    # Pre-written Power BI DAX metrics
-│   ├── Court_Coordinate_Mapping_Guide.md   # Step-by-step Power BI setup guide
-│   ├── nba_half_court.jpg              # High-res half-court background visual
-│   ├── Stephen_Curry_Shot_Chart.png    # Plotted shot chart image
-│   ├── Klay_Thompson_Shot_Chart.png     # Plotted shot chart image
-│   └── Gary_Payton_II_Shot_Chart.png   # Plotted shot chart image
-├── plot_player_shots.py                # Script to generate player shot charts
-├── RESUME_SHOWCASE.md                      # Resume bullets, portfolio summary & interview Q&A
-├── requirements.txt                        # Python dependencies
-└── README.md
+│   ├── __init__.py
+│   ├── config.py
+│   ├── court_visualizer.py
+│   ├── ingestion.py
+│   ├── pipeline.py
+│   └── processing.py
+├── .gitignore
+├── LICENSE
+├── README.md
+├── RESUME_SHOWCASE.md
+├── plot_player_shots.py
+├── requirements.txt
+└── .
 ```
 
----
+## How to run
 
-## 🚀 Quick Start Guide
-
-### **1. Install Dependencies**
 ```bash
+git clone <repo-url>
+cd <repo>
 pip install -r requirements.txt
+jupyter notebook notebooks/01_gsw_data_ingestion.ipynb
 ```
 
-### **2. Run Automated ETL Pipeline**
+To reproduce the feature engineering workflow:
+
 ```bash
-# Process dataset (uses local cache if available)
-python -m src.pipeline
-
-# Force fresh extraction from NBA Stats REST API
-python -m src.pipeline --force-refresh
+jupyter notebook notebooks/02_gsw_feature_engineering.ipynb
 ```
 
-### **3. Generate Half-Court Shot Charts**
-```bash
-python plot_player_shots.py
-```
+## Data
 
----
+- Source: NBA Stats API via `nba_api` and the team shot chart endpoint for the Golden State Warriors.
+- Seasons covered: 2021-22 regular season.
+- Collection method: roster and player shot requests were retrieved programmatically, cleaned into a single raw dataset, and saved in `data/raw/gsw_2022_roster_shots.csv` before feature engineering.
+- Processed outputs: `data/processed/fact_shots.csv`, `data/processed/dim_player.csv`, and `data/processed/dim_shot_zone.csv`.
 
-## 📈 Power BI Integration
+## Analytical framework
 
-1. Connect Power BI Desktop to `data/processed/Fact_Shots.csv`, `Dim_Player.csv`, and `Dim_Shot_Zone.csv`.
-2. Copy DAX measures from `powerbi/DAX_Measures.dax`.
-3. Follow **[`powerbi/Court_Coordinate_Mapping_Guide.md`](file:///d:/projects/NBA%20Spatial%20Efficiency%20Analysis/powerbi/Court_Coordinate_Mapping_Guide.md)** to configure scatter visual overlays using `powerbi/nba_half_court.jpg`.
+### Coordinate normalization
 
----
+Raw NBA API coordinates are normalized from the standard NBA shot chart coordinate system into a 50ft x 47ft half-court layout used for spatial analysis and plotting.
 
-## 📄 Resume & Portfolio Guide
+### Expected Value
 
-Check out **[`RESUME_SHOWCASE.md`](file:///d:/projects/NBA%20Spatial%20Efficiency%20Analysis/RESUME_SHOWCASE.md)** for copy-paste resume bullet points (STAR method), project pitches, system architecture diagrams, and interview Q&A!
+- Shot value = 3 for three-point attempts, 2 for two-point attempts.
+- Zone baseline FG% = the historical make rate for each spatial court zone.
+- Expected value = shot value × zone baseline FG%.
+- PAE = actual points scored − expected value.
+
+## Limitations
+
+- Sample size is limited to the 2021-22 Golden State Warriors roster and season window.
+- Data quality depends on API availability and the shot-chart record coverage returned by NBA endpoints.
+- This project is descriptive, not causal: it identifies spatial efficiency patterns rather than proving causal drivers.
+- No model claims are made beyond the observed relationship between shot location, expected value, and actual scoring output.
+
+## License
+
+This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
+
+## Numbers changed for this README
+
+This README uses only values already present in the project outputs and notebooks: 1,224 total attempts for Stephen Curry, 1,019 for Andrew Wiggins, 344 for Gary Payton II, +15.41 total PAE for Curry, +29.32 total PAE for Wiggins, and +53.99 total PAE with +0.1569 PAE per shot for Payton II.
