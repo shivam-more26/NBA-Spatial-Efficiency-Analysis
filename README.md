@@ -39,17 +39,12 @@ The clearest result from the analysis is that Gary Payton II delivered the stron
 ## Project structure
 
 ```text
-NBA Spatial Efficiency Analysis/
+NBA-Spatial-Efficiency-Analysis/
 ├── data/
 │   ├── raw/
-│   │   ├── gsw_2022_roster_shots.csv
 │   │   └── gsw_2022_roster_shots_root.csv
 │   └── processed/
-│       ├── fact_shots.csv
-│       ├── dim_player.csv
-│       ├── dim_shot_zone.csv
-│       ├── gsw_2022_processed_ev.csv
-│       └── spatial_zone_ev_summary.csv
+│       └── gsw_2022_processed_ev.csv
 ├── images/
 │   ├── andrew_wiggins_shot_chart.png
 │   ├── gary_payton_ii_shot_chart.png
@@ -97,8 +92,8 @@ jupyter notebook notebooks/02_gsw_feature_engineering.ipynb
 
 - Source: NBA Stats API via `nba_api` and the team shot chart endpoint for the Golden State Warriors.
 - Seasons covered: 2021-22 regular season.
-- Collection method: roster and player shot requests were retrieved programmatically, cleaned into a single raw dataset, and saved in `data/raw/gsw_2022_roster_shots.csv` before feature engineering.
-- Processed outputs: `data/processed/fact_shots.csv`, `data/processed/dim_player.csv`, and `data/processed/dim_shot_zone.csv`.
+- Collection method: roster and player shot requests were retrieved programmatically, cleaned into a single raw dataset, and saved in `data/raw/gsw_2022_roster_shots_root.csv` before feature engineering.
+- Processed output: `data/processed/gsw_2022_processed_ev.csv`.
 
 ## Analytical framework
 
